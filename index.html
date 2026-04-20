@@ -622,6 +622,49 @@
             pointer-events: none;
         }
 
+        /* — Projects — */
+        .projects-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: var(--label-transform);
+            color: var(--muted);
+            transition: color var(--transition-duration) ease;
+        }
+
+        .project-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .project-item a {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .project-name {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--ink);
+            transition: color 0.3s ease;
+        }
+
+        .project-item a:hover .project-name {
+            color: var(--accent);
+        }
+
+        .project-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            transition: color var(--transition-duration) ease;
+        }
+
         /* — Responsive — */
         @media (max-width: 680px) {
             main {
@@ -681,6 +724,30 @@
 
                     Most recently I've worked in security and fraud detection for financial institutions. 
                 </p>
+                <div class="divider"></div>
+                <div>
+                    <span class="projects-label">Recent Projects</span>
+                    <ul class="project-list" style="margin-top: 0.6rem;">
+                        <li class="project-item">
+                            <a href="https://baseusball.com/" target="_blank" rel="noopener">
+                                <span class="project-name">Baseusball</span>
+                                <span class="project-desc">A fast, minimal MLB schedule and scores app. Check team schedules, live scores, standings, box scores, and season trends. Focused on information density.</span>
+                            </a>
+                        </li>
+                        <li class="project-item">
+                            <a href="https://bluemove.cc/" target="_blank" rel="noopener">
+                                <span class="project-name">Blue Move</span>
+                                <span class="project-desc">9×9 Go with a twist — KataGo picks the losing square each turn. Play it and lose instantly. The blue spot is hidden until the game ends.</span>
+                            </a>
+                        </li>
+                        <li class="project-item">
+                            <a href="https://gopoints.cc/" target="_blank" rel="noopener">
+                                <span class="project-name">Go Points</span>
+                                <span class="project-desc">A fun app for testing your knowledge of coordinates on a Go board.</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 <div class="divider"></div>
                 <div class="links">
                     <a href="resume.pdf" class="resume-link">
