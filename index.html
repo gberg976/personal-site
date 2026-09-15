@@ -52,6 +52,7 @@
             --noise-opacity: 0.025;
             --scanline: none;
             --transition-duration: 0.6s;
+            --vt-duration: 1.5s;
         }
 
         /* — Brutalist — */
@@ -560,6 +561,154 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* =============================================
+           POWERPOINT-STYLE THEME TRANSITIONS
+           (View Transitions API)
+           ============================================= */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        /* Freeze CSS transitions while a view transition runs so the
+           incoming snapshot shows the final theme, not a fading midpoint. */
+        html[data-transition] *,
+        html[data-transition] *::before,
+        html[data-transition] *::after {
+            transition: none !important;
+        }
+
+        /* Dissolve — classic crossfade */
+        html[data-transition="dissolve"]::view-transition-old(root) {
+            animation: vt-fade-out var(--vt-duration) ease both;
+        }
+        html[data-transition="dissolve"]::view-transition-new(root) {
+            animation: vt-fade-in var(--vt-duration) ease both;
+        }
+
+        /* Fade — new theme fades in over the old */
+        html[data-transition="fade"]::view-transition-new(root) {
+            animation: vt-fade-in var(--vt-duration) ease both;
+        }
+
+        /* Wipe — new theme sweeps in from the left */
+        html[data-transition="wipe"]::view-transition-old(root) {
+            z-index: 1;
+        }
+        html[data-transition="wipe"]::view-transition-new(root) {
+            z-index: 2;
+            animation: vt-wipe var(--vt-duration) cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+
+        /* Spiral — new theme spins and opens out from the center */
+        html[data-transition="spiral"]::view-transition-old(root) {
+            z-index: 1;
+        }
+        html[data-transition="spiral"]::view-transition-new(root) {
+            z-index: 2;
+            transform-origin: 50% 50%;
+            animation: vt-spiral var(--vt-duration) cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        /* Ripple — new theme blooms out from the center with a bounce */
+        html[data-transition="ripple"]::view-transition-old(root) {
+            z-index: 1;
+        }
+        html[data-transition="ripple"]::view-transition-new(root) {
+            z-index: 2;
+            animation: vt-ripple var(--vt-duration) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        /* Blinds — horizontal slats open to reveal the new theme */
+        html[data-transition="blinds"]::view-transition-old(root) {
+            z-index: 1;
+        }
+        html[data-transition="blinds"]::view-transition-new(root) {
+            z-index: 2;
+            mask-image: repeating-linear-gradient(0deg, #000 0 var(--vt-open), transparent var(--vt-open) 40px);
+            animation: vt-blinds var(--vt-duration) ease both;
+        }
+
+        /* Checkerboard — squares grow in until the new theme covers */
+        html[data-transition="checkerboard"]::view-transition-old(root) {
+            z-index: 1;
+        }
+        html[data-transition="checkerboard"]::view-transition-new(root) {
+            z-index: 2;
+            mask-image:
+                repeating-linear-gradient(0deg, #000 0 var(--vt-open), transparent var(--vt-open) 40px),
+                repeating-linear-gradient(90deg, #000 0 var(--vt-open), transparent var(--vt-open) 40px);
+            mask-composite: intersect;
+            -webkit-mask-composite: source-in;
+            animation: vt-checkerboard var(--vt-duration) ease both;
+        }
+
+        /* Clock — radial sweep from 12 o'clock */
+        html[data-transition="clock"]::view-transition-old(root) {
+            z-index: 1;
+        }
+        html[data-transition="clock"]::view-transition-new(root) {
+            z-index: 2;
+            mask-image: conic-gradient(from 0deg, #000 0deg, #000 var(--vt-angle), transparent var(--vt-angle));
+            animation: vt-clock var(--vt-duration) linear both;
+        }
+
+        /* Registered custom properties animate inside the masks above. */
+        @property --vt-open {
+            syntax: '<length>';
+            inherits: false;
+            initial-value: 0px;
+        }
+        @property --vt-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        @keyframes vt-blinds {
+            from { --vt-open: 0px; }
+            to   { --vt-open: 40px; }
+        }
+        @keyframes vt-checkerboard {
+            from { --vt-open: 0px; }
+            to   { --vt-open: 40px; }
+        }
+        @keyframes vt-clock {
+            from { --vt-angle: 0deg; }
+            to   { --vt-angle: 360deg; }
+        }
+
+        @keyframes vt-spiral {
+            from {
+                transform: rotate(-220deg) scale(0.15);
+                clip-path: circle(0% at 50% 50%);
+                opacity: 0;
+            }
+            to {
+                transform: rotate(0deg) scale(1);
+                clip-path: circle(150% at 50% 50%);
+                opacity: 1;
+            }
+        }
+        @keyframes vt-ripple {
+            from { clip-path: circle(0% at 50% 50%); }
+            to   { clip-path: circle(150% at 50% 50%); }
+        }
+
+        @keyframes vt-fade-in {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes vt-fade-out {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+        @keyframes vt-wipe {
+            from { clip-path: inset(0 100% 0 0); }
+            to   { clip-path: inset(0 0 0 0); }
+        }
+
         /* — Theme indicator — */
         .theme-indicator {
             position: fixed;
@@ -730,20 +879,20 @@
                     <ul class="project-list" style="margin-top: 0.6rem;">
                         <li class="project-item">
                             <a href="https://baseusball.com/" target="_blank" rel="noopener">
-                                <span class="project-name">Baseusball</span>
-                                <span class="project-desc">A fast, minimal MLB schedule and scores app. Check team schedules, live scores, standings, box scores, and season trends. Focused on information density.</span>
+                                <span class="project-name">Base us ball</span>
+                                <span class="project-desc">A fast, minimal MLB schedule and scores app. Check team schedules, live scores, standings, box scores, and season trends. Get daily notifications, and notifications for Extraordinary Events. Prioritizes information density.</span>
                             </a>
                         </li>
                         <li class="project-item">
                             <a href="https://bluemove.cc/" target="_blank" rel="noopener">
                                 <span class="project-name">Blue Move</span>
-                                <span class="project-desc">A novel go varient utilizing superhuman go AI. 9x9 go, but if you play the "blue move" you lose instantly</span>
+                                <span class="project-desc">A fun go variant; 9x9 go, but if you play the "blue move" you lose instantly</span>
                             </a>
                         </li>
                         <li class="project-item">
                             <a href="https://gopoints.cc/" target="_blank" rel="noopener">
                                 <span class="project-name">Go Points</span>
-                                <span class="project-desc">A fun app for testing your knowledge of coordinates on a Go board.</span>
+                                <span class="project-desc">A little app for testing your knowledge of coordinates on a Go board. Half joke, half fun, half useful.</span>
                             </a>
                         </li>
                     </ul>
@@ -776,9 +925,10 @@
 
     <script>
         /* =========================================
-           CONFIGURATION — change this value
+           CONFIGURATION — change these values
            ========================================= */
         const INTERVAL_SECONDS = 10;
+        const TRANSITIONS = ['spiral', 'vibrate']; // picked at random each cycle
 
         /* ========================================= */
 
@@ -814,17 +964,30 @@
         }
 
         function cycleTheme() {
-            // Start vibrating
-            document.body.classList.add('vibrating');
+            currentIndex = (currentIndex + 1) % themes.length;
+            const theme = themes[currentIndex];
 
-            setTimeout(() => {
-                // Stop vibrating, switch theme
-                document.body.classList.remove('vibrating');
-                currentIndex = (currentIndex + 1) % themes.length;
-                const theme = themes[currentIndex];
+            const effect = TRANSITIONS[transitionIndex];
+            transitionIndex = (transitionIndex + 1) % TRANSITIONS.length;
+
+            const applyTheme = () => {
                 setTheme(theme.id);
                 showIndicator(theme.name);
-            }, VIBRATE_DURATION);
+            };
+
+            // Fall back to the shake when view transitions aren't supported.
+            if (effect === 'vibrate' || !document.startViewTransition) {
+                document.body.classList.add('vibrating');
+                setTimeout(() => {
+                    document.body.classList.remove('vibrating');
+                    applyTheme();
+                }, VIBRATE_DURATION);
+                return;
+            }
+
+            root.setAttribute('data-transition', effect);
+            const vt = document.startViewTransition(applyTheme);
+            vt.finished.finally(() => root.removeAttribute('data-transition'));
         }
 
         // Countdown bar animation
